@@ -126,6 +126,54 @@ data quakes;
 set quakes;
 if id = 1 then delete;
 run;
+
+tittle 'Scatter plot showing the relationship between magnitude and depth';
+proc sgplot data=WORK.QUAKES;
+	scatter x=Magnitude y=Depth /;
+	xaxis grid;
+	yaxis grid;
+run;
+
+
+
+/* Define Pie template */
+proc template;
+	define statgraph SASStudio.Pie;
+		begingraph;
+		entrytitle "Pie Showing The percenttage of quakes" / textattrs=(size=14);
+		layout region;
+		piechart category=Type / stat=pct start=180 categorydirection=clockwise 
+			datalabellocation=outside fillattrs=(transparency=0.25) dataskin=gloss;
+		endlayout;
+		endgraph;
+	end;
+run;
+
+/*Modify*/
+%macro modifying(id, magnitude, type);
+data work.quakes;
+	set work.quakes;
+	modify quakes;
+	magnitude = magnitude +1;
+	type = "Edwin";
+	depth = 3;
+	where id = &id;
+	proc print data=work.quakes (obs=10);
+	
+run;
+%mend modifying;
+%modifying(5);
+
+/* second modify*/
+%macro search(id=);
+proc print data = quakes;
+where id = &id;
+run;
+%mend search;
+%search(id=55);
+ 
+ 
+
 		
 		
 
